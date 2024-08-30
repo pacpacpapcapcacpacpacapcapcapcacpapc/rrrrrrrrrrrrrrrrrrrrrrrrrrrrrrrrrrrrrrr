@@ -3,7 +3,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 
 # 구글 서비스 계정 키 파일 경로 설정
-SERVICE_ACCOUNT_FILE = '600d272ac3fc49c2066472c5496025a729a499e4.json'  # 🟦'path_to_your_service_account.json' 부분 수정 필요
+SERVICE_ACCOUNT_FILE = 'summer-foundry-429504-e6-600d272ac3fc.json'  # 🟦'path_to_your_service_account.json' 부분 수정 필요
 
 # Google Sheets API 인증
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
