@@ -1,36 +1,29 @@
 import streamlit as st
-from datetime import datetime
+import gspread
+from google.oauth2.service_account import Credentials
 
-# 애플리케이션 제목
-st.title("학생 결석 사유 입력")
+# 구글 서비스 계정 키 파일 경로 설정
+SERVICE_ACCOUNT_FILE = '600d272ac3fc49c2066472c5496025a729a499e4'  # 🟦'path_to_your_service_account.json' 부분 수정 필요
 
-# 결석 종류 선택
-absence_type = st.selectbox(
-    "결석 종류를 선택하세요:",
-    ["질병결석", "인정결석", "기타결석"]
-)
+# Google Sheets API 인증
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
+         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=scope)
+client = gspread.authorize(creds)
 
-# 결석 날짜 선택
-absence_date = st.date_input(
-    "결석 날짜를 선택하세요:",
-    value=datetime.today()
-)
+# 스프레드시트 열기
+spreadsheet = client.open("rockyrocky")  # 🟦'Your Spreadsheet Name' 부분 수정 필요
+worksheet = spreadsheet.sheet1
 
-# 결석 사유 입력
-reason = st.text_area("결석 사유를 서술하세요:")
+# Streamlit UI 설정
+st.title('데이터 입력 예제')
+
+# 사용자 입력 받기
+name = st.text_input('이름을 입력하세요:')
+age = st.number_input('나이를 입력하세요:', min_value=0, max_value=100)
 
 # 제출 버튼
-if st.button("제출"):
-    if not reason.strip():
-        st.error("결석 사유를 입력해 주세요.")
-    else:
-        # 제출된 정보 출력
-        st.success("결석 사유가 성공적으로 제출되었습니다.")
-        st.write("### 입력된 정보")
-        st.write(f"- **결석 종류**: {absence_type}")
-        st.write(f"- **결석 날짜**: {absence_date.strftime('%Y-%m-%d')}")
-        st.write(f"- **사유**: {reason}")
-
-# 기존 제출된 정보 보기 (기능 확장을 위한 섹션)
-st.sidebar.title("기존 제출된 정보 보기")
-st.sidebar.info("현재 저장된 데이터는 없음. 나중에 데이터베이스 기능을 추가할 수 있습니다.")
+if st.button('제출'):
+    # 스프레드시트에 데이터 추가
+    worksheet.append_row([name, age])
+    st.success('데이터가 스프레드시트에 추가되었습니다!')
